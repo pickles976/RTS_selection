@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,6 +24,7 @@ public class global_selection : MonoBehaviour
 
     //the vertices of our meshcollider
     Vector3[] verts;
+    Vector3[] vecs;
 
     // Start is called before the first frame update
     void Start()
@@ -85,6 +86,7 @@ public class global_selection : MonoBehaviour
             else //marquee select
             {
                 verts = new Vector3[4];
+                vecs = new Vector3[4];
                 int i = 0;
                 p2 = Input.mousePosition;
                 corners = getBoundingBox(p1, p2);
@@ -95,14 +97,15 @@ public class global_selection : MonoBehaviour
 
                     if (Physics.Raycast(ray, out hit, 50000.0f, (1 << 8)))
                     {
-                        verts[i] = new Vector3(hit.point.x, 0, hit.point.z);
+                        verts[i] = new Vector3(hit.point.x, hit.point.y, hit.point.z);
+                        vecs[i] = ray.origin - hit.point;
                         Debug.DrawLine(Camera.main.ScreenToWorldPoint(corner), hit.point, Color.red, 1.0f);
                     }
                     i++;
                 }
 
                 //generate the mesh
-                selectionMesh = generateSelectionMesh(verts);
+                selectionMesh = generateSelectionMesh(verts,vecs);
 
                 selectionBox = gameObject.AddComponent<MeshCollider>();
                 selectionBox.sharedMesh = selectionMesh;
@@ -114,7 +117,7 @@ public class global_selection : MonoBehaviour
                     selected_table.deselectAll();
                 }
 
-                Destroy(selectionBox, 0.02f);
+               Destroy(selectionBox, 0.02f);
 
             }//end marquee select
 
@@ -184,7 +187,7 @@ public class global_selection : MonoBehaviour
     }
 
     //generate a mesh from the 4 bottom points
-    Mesh generateSelectionMesh(Vector3[] corners)
+    Mesh generateSelectionMesh(Vector3[] corners, Vector3[] vecs)
     {
         Vector3[] verts = new Vector3[8];
         int[] tris = { 0, 1, 2, 2, 1, 3, 4, 6, 0, 0, 6, 2, 6, 7, 2, 2, 7, 3, 7, 5, 3, 3, 5, 1, 5, 0, 1, 1, 4, 0, 4, 5, 6, 6, 5, 7 }; //map the tris of our cube
@@ -196,7 +199,7 @@ public class global_selection : MonoBehaviour
 
         for(int j = 4; j < 8; j++)
         {
-            verts[j] = corners[j - 4] + Vector3.up * 100.0f;
+            verts[j] = corners[j - 4] + vecs[j - 4];
         }
 
         Mesh selectionMesh = new Mesh();
