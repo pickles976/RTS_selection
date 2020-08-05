@@ -140,48 +140,18 @@ public class global_selection : MonoBehaviour
     //create a bounding box (4 corners in order) from the start and end mouse position
     Vector2[] getBoundingBox(Vector2 p1,Vector2 p2)
     {
-        Vector2 newP1;
-        Vector2 newP2;
-        Vector2 newP3;
-        Vector2 newP4;
+        // Min and Max to get 2 corners of rectangle regardless of drag direction.
+        var bottomLeft = Vector3.Min(p1, p2);
+        var topRight = Vector3.Max(p1, p2);
 
-        if (p1.x < p2.x) //if p1 is to the left of p2
+        // 0 = top left; 1 = top right; 2 = bottom left; 3 = bottom right;
+        Vector2[] corners =
         {
-            if (p1.y > p2.y) // if p1 is above p2
-            {
-                newP1 = p1;
-                newP2 = new Vector2(p2.x, p1.y);
-                newP3 = new Vector2(p1.x, p2.y);
-                newP4 = p2;
-            }
-            else //if p1 is below p2
-            {
-                newP1 = new Vector2(p1.x, p2.y);
-                newP2 = p2;
-                newP3 = p1;
-                newP4 = new Vector2(p2.x, p1.y);
-            }
-        }
-        else //if p1 is to the right of p2
-        {
-            if (p1.y > p2.y) // if p1 is above p2
-            {
-                newP1 = new Vector2(p2.x, p1.y);
-                newP2 = p1;
-                newP3 = p2;
-                newP4 = new Vector2(p1.x, p2.y);
-            }
-            else //if p1 is below p2
-            {
-                newP1 = p2;
-                newP2 = new Vector2(p1.x, p2.y);
-                newP3 = new Vector2(p2.x, p1.y);
-                newP4 = p1;
-            }
-
-        }
-
-        Vector2[] corners = { newP1, newP2, newP3, newP4 };
+            new Vector2(bottomLeft.x, topRight.y),
+            new Vector2(topRight.x, topRight.y),
+            new Vector2(bottomLeft.x, bottomLeft.y),
+            new Vector2(topRight.x, bottomLeft.y)
+        };
         return corners;
 
     }
