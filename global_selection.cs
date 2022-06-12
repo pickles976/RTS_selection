@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class global_selection : MonoBehaviour
 {
-    id_dictionary id_table;
+    
     selected_dictionary selected_table;
     RaycastHit hit;
 
@@ -29,7 +29,7 @@ public class global_selection : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        id_table = GetComponent<id_dictionary>();
+        
         selected_table = GetComponent<selected_dictionary>();
         dragSelect = false;
     }
